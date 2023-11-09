@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import de.jplag.hooks.Hook;
+import de.jplag.hooks.HookBuilder;
+import de.jplag.hooks.HookManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +44,7 @@ public class JPlag {
     @Deprecated(since = "4.3.0")
     public JPlag(JPlagOptions options) {
         this.options = options;
+        HookManager.init();
     }
 
     /**
@@ -61,6 +65,7 @@ public class JPlag {
      * @throws ExitException if JPlag exits preemptively.
      */
     public static JPlagResult run(JPlagOptions options) throws ExitException {
+        HookManager.init();
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
         ComparisonStrategy comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
         // Parse and validate submissions.
@@ -83,8 +88,18 @@ public class JPlag {
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
 
         logSkippedSubmissions(submissionSet, options);
+        HookManager.destroy();
 
         return result;
+    }
+
+    public static void runWithHooks(JPlagOptions options, HookBuilder builder) throws ExitException {
+        HookManager.init(builder.buildHookManager());
+        JPlag.run(options);
+    }
+
+    public <T extends Hook<?>> void registerHook(T hook) {
+        HookManager.createHook(hook);
     }
 
     private static void logSkippedSubmissions(SubmissionSet submissionSet, JPlagOptions options) {

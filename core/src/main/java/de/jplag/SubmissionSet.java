@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.jplag.hooks.HookManager;
+import de.jplag.hooks.ParseHook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,6 +150,7 @@ public class SubmissionSet {
 
             logger.trace("------ Parsing submission: " + submission.getName());
             currentSubmissionName = submission.getName();
+            HookManager.invokeHook(ParseHook.class, submission);
 
             if (!(ok = submission.parse(options.debugParser()))) {
                 errors++;

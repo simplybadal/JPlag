@@ -1,12 +1,14 @@
 package de.jplag.hooks;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Manages hook for JPlag. Do not use this when using the JPlag api.
  */
 public class HookManager {
     private static final ThreadLocal<HookManager> currentThreadHookManager = ThreadLocal.withInitial(() -> null);
+    private static final Logger LOGGER = Logger.getLogger(HookManager.class.getName());
     private final Map<Class<? extends Hook<?>>, List<Hook<?>>> hooks;
 
     public HookManager() {
@@ -42,6 +44,10 @@ public class HookManager {
     }
 
     public static <T> void invokeHook(Class<? extends Hook<T>> type, T parameter) {
-        currentThreadHookManager.get().invokeHookByType(type, parameter);
+        if (currentThreadHookManager.get() != null) {
+            currentThreadHookManager.get().invokeHookByType(type, parameter);
+        } else {
+            LOGGER.info("Cannot invoke hooks, since no hook manager is currently available. This should only happen for internal tests of JPlag.");
+        }
     }
 }

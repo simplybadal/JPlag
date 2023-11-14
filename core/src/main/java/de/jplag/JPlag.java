@@ -4,15 +4,15 @@ import java.io.File;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import de.jplag.hooks.Hook;
-import de.jplag.hooks.HookBuilder;
-import de.jplag.hooks.HookManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
+import de.jplag.hooks.Hook;
+import de.jplag.hooks.HookBuilder;
+import de.jplag.hooks.HookManager;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;

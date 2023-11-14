@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.jplag.hooks.HookManager;
-import de.jplag.hooks.ParseHook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
+import de.jplag.hooks.HookManager;
+import de.jplag.hooks.ParseHook;
 import de.jplag.options.JPlagOptions;
 
 /**

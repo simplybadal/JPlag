@@ -26,7 +26,8 @@ public class HookManager {
 
     public <T extends Hook<?>> void setHook(T value) {
         if (!addHookByInferredTypes(value.getClass(), value)) {
-            throw new IllegalArgumentException(String.format("No valid hook type could be found in the inheritance tree of %s.", value.getClass().getName()));
+            throw new IllegalArgumentException(
+                    String.format("No valid hook type could be found in the inheritance tree of %s.", value.getClass().getName()));
         }
     }
 
@@ -83,9 +84,8 @@ public class HookManager {
 
     /**
      * Registers the hook with all valid type in the inheritance tree of the given hook.
-     *
      * @param value The hook to add
-     * @param <T>   The type of the added hook
+     * @param <T> The type of the added hook
      */
     public static <T extends Hook<?>> void createHook(T value) {
         currentThreadHookManager.get().setHook(value);

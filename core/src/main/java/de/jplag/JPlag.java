@@ -11,7 +11,6 @@ import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.hooks.Hook;
-import de.jplag.hooks.HookBuilder;
 import de.jplag.hooks.HookManager;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
@@ -38,10 +37,8 @@ public class JPlag {
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
-     * @deprecated in favor of static {@link #run(JPlagOptions)}.
      * @param options determines the parameterization.
      */
-    @Deprecated(since = "4.3.0")
     public JPlag(JPlagOptions options) {
         this.options = options;
         HookManager.init();
@@ -49,11 +46,9 @@ public class JPlag {
 
     /**
      * Main procedure, executes the comparison of source code submissions.
-     * @deprecated in favor of static {@link #run(JPlagOptions)}.
      * @return the results of the comparison, specifically the submissions whose similarity exceeds a set threshold.
      * @throws ExitException if JPlag exits preemptively.
      */
-    @Deprecated(since = "4.3.0")
     public JPlagResult run() throws ExitException {
         return run(options);
     }
@@ -93,9 +88,8 @@ public class JPlag {
         return result;
     }
 
-    public static void runWithHooks(JPlagOptions options, HookBuilder builder) throws ExitException {
-        HookManager.init(builder.buildHookManager());
-        JPlag.run(options);
+    public <T extends Hook<?>> void registerHook(Class<T> type, T value) {
+        HookManager.createHook(type, value);
     }
 
     public <T extends Hook<?>> void registerHook(T hook) {

@@ -15,14 +15,52 @@ public class HookManager {
         this.hooks = new HashMap<>();
     }
 
+    public <T extends Hook<?>> void setHook(Class<T> hookType, T value) {
+        if (this.isHookTypeValid(hookType)) {
+            this.hooks.putIfAbsent(hookType, new ArrayList<>());
+            this.hooks.get(hookType).add(value);
+        } else {
+            throw new IllegalArgumentException(String.format("The type %s is not a valid hook type.", hookType.getName()));
+        }
+    }
+
     public <T extends Hook<?>> void setHook(T value) {
-        this.hooks.putIfAbsent(value.hookType(), new ArrayList<>());
-        this.hooks.get(value.hookType()).add(value);
+        if (!addHookByInferredTypes(value.getClass(), value)) {
+            throw new IllegalArgumentException(String.format("No valid hook type could be found in the inheritance tree of %s.", value.getClass().getName()));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends Hook<?>> boolean addHookByInferredTypes(Class<?> type, T value) {
+        boolean valid = false;
+
+        if (isHookTypeValid(type)) {
+            this.setHook((Class<T>) type, value);
+            valid = true;
+        }
+
+        if (type.getSuperclass() != null) {
+            if (addHookByInferredTypes(type.getSuperclass(), value)) {
+                valid = true;
+            }
+        }
+
+        for (Class<?> anInterface : type.getInterfaces()) {
+            if (addHookByInferredTypes(anInterface, value)) {
+                valid = true;
+            }
+        }
+
+        return valid;
     }
 
     @SuppressWarnings("unchecked")
     private <T> void invokeHookByType(Class<? extends Hook<T>> type, T parameter) {
         this.hooks.getOrDefault(type, Collections.emptyList()).forEach(it -> ((Hook<T>) it).invoke(parameter));
+    }
+
+    private boolean isHookTypeValid(Class<?> type) {
+        return type.isInterface() && Hook.class.isAssignableFrom(type) && !type.equals(Hook.class);
     }
 
     public static void init(HookManager manager) {
@@ -39,6 +77,16 @@ public class HookManager {
         currentThreadHookManager.remove();
     }
 
+    public static <T extends Hook<?>> void createHook(Class<T> hookType, T value) {
+        currentThreadHookManager.get().setHook(hookType, value);
+    }
+
+    /**
+     * Registers the hook with all valid type in the inheritance tree of the given hook.
+     *
+     * @param value The hook to add
+     * @param <T>   The type of the added hook
+     */
     public static <T extends Hook<?>> void createHook(T value) {
         currentThreadHookManager.get().setHook(value);
     }

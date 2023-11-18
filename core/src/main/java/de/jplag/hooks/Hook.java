@@ -6,8 +6,4 @@ package de.jplag.hooks;
 @FunctionalInterface
 public interface Hook<T> {
     void invoke(T value);
-
-    default Class<? extends Hook<?>> hookType() {
-        throw new UnsupportedOperationException();
-    }
 }

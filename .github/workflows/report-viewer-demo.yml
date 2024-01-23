@@ -3,8 +3,6 @@ name: Report Viewer Demo Deployment
 on:
   workflow_dispatch: # Use this to dispatch from the Actions Tab
   push:
-    branches:
-      - main
       
 jobs:
   build-jar:

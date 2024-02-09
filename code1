@@ -1,0 +1,51 @@
+#include <iostream>
+
+using namespace std;
+
+const int MAX_SIZE = 100;
+
+bool is_valid(int x, int y, int rows, int cols) {
+    return x >= 0 && x < rows && y >= 0 && y < cols;
+}
+
+bool solve_maze(int maze[MAX_SIZE][MAX_SIZE], int x, int y, bool visited[MAX_SIZE][MAX_SIZE], int rows, int cols) {
+    if (x == 0 && y == 0 && maze[x][y] == 0) {
+        return true;
+    }
+
+    if (maze[x][y] == 1 || visited[x][y]) {
+        return false;
+    }
+
+    visited[x][y] = true;
+
+    if ((is_valid(x - 1, y, rows, cols) && solve_maze(maze, x - 1, y, visited, rows, cols)) ||
+        (is_valid(x + 1, y, rows, cols) && solve_maze(maze, x + 1, y, visited, rows, cols)) ||
+        (is_valid(x, y - 1, rows, cols) && solve_maze(maze, x, y - 1, visited, rows, cols)) ||
+        (is_valid(x, y + 1, rows, cols) && solve_maze(maze, x, y + 1, visited, rows, cols))) {
+        return true;
+    }
+
+    return false;
+}
+
+bool can_escape_maze(int maze[MAX_SIZE][MAX_SIZE], int rows, int cols) {
+    bool visited[MAX_SIZE][MAX_SIZE] = {false};
+
+    return solve_maze(maze, rows - 1, cols - 1, visited, rows, cols);
+}
+
+int main() {
+    int maze1[MAX_SIZE][MAX_SIZE] = {{0, 0, 0},
+                                     {1, 1, 0},
+                                     {0, 0, 0}};
+
+    int maze2[MAX_SIZE][MAX_SIZE] = {{0, 0, 1},
+                                     {1, 1, 1},
+                                     {0, 0, 1}};
+
+    cout << can_escape_maze(maze1, 3, 3) << endl;
+    cout << can_escape_maze(maze2, 3, 3) << endl; 
+
+    
+}
